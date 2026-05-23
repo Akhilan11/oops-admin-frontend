@@ -1,4 +1,4 @@
-const API = 'http://localhost:5001/api';
+const API = '/api';
 let accessToken = sessionStorage.getItem('oops-access-token');
 
 class ApiError extends Error {
@@ -31,10 +31,10 @@ async function request(path, options = {}) {
     if (refreshed) {
       return request(path, { ...options, _retry: true });
     }
-    // Refresh failed — redirect to login
+    accessToken = null;
     sessionStorage.removeItem('oops-access-token');
-    window.location.href = '/login';
-    return;
+    const data = await res.json();
+    throw new ApiError(data.message, 401, data.errors);
   }
 
   const data = await res.json();

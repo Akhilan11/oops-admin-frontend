@@ -442,7 +442,7 @@ export default function ProductEditorPage() {
                             value={form.stock[size] ?? ''}
                             onChange={(e) => setStock(size, e.target.value)}
                             placeholder="0"
-                            className="w-12 text-center text-[11px] font-bold tabular-nums bg-warmblack/[0.03] border border-warmblack/8 rounded-md py-1 text-warmblack placeholder-warmblack/20 focus:outline-none focus:ring-1 focus:ring-warmblack/10"
+                            className="w-16 text-center text-sm font-bold tabular-nums bg-white border border-warmblack/15 rounded-md py-1.5 text-warmblack placeholder-warmblack/20 focus:outline-none focus:ring-1 focus:ring-warmblack/20"
                           />
                         )}
                       </div>
