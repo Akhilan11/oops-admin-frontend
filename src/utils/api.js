@@ -48,12 +48,20 @@ async function refresh() {
       method: 'POST',
       credentials: 'include',
     });
-    if (!res.ok) return false;
+    if (!res.ok) {
+      accessToken = null;
+      sessionStorage.removeItem('oops-access-token');
+      sessionStorage.removeItem('oops-admin-user');
+      return false;
+    }
     const data = await res.json();
     accessToken = data.data.accessToken;
     sessionStorage.setItem('oops-access-token', accessToken);
     return true;
   } catch {
+    accessToken = null;
+    sessionStorage.removeItem('oops-access-token');
+    sessionStorage.removeItem('oops-admin-user');
     return false;
   }
 }
