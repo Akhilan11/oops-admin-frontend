@@ -1,16 +1,62 @@
-# React + Vite
+# OOPS Admin Panel
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Admin dashboard for OOPS Fashion — manage products, orders, customers, and reviews.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + Vite
+- Tailwind CSS
+- Framer Motion
+- Flowbite React (tables, modals, cards)
+- Chart.js (dashboard analytics)
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Dashboard:** Revenue, orders, top products, sold-out alerts
+- **Products:** CRUD, image upload (Cloudinary), stock management, size/status control
+- **Orders:** List with filters, status advancement (placed → processing → shipped → delivered)
+- **Customers:** Aggregated from orders, search, order history
+- **Reviews:** View and delete inappropriate reviews
+- **Settings:** Email trigger configuration, Gmail OAuth connection
+- **Auth:** 2FA login (password + OTP)
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+src/
+├── common/          # Sidebar, ProtectedRoute, Layout
+├── context/         # AdminAuthContext
+├── pages/
+│   ├── dashboard/   # Stats, charts, recent orders, top products
+│   ├── products/    # ProductsPage, ProductEditorPage, ProductDetailPage
+│   ├── orders/      # OrdersPage, OrderDetailPage
+│   ├── customers/   # CustomersPage
+│   ├── settings/    # Email settings
+│   └── login/       # 2FA login flow
+└── utils/           # api.js
+```
+
+## Setup
+
+```bash
+npm install
+npm run dev
+```
+
+## Environment
+
+In development, Vite proxies `/api` to `http://localhost:5001`. No environment variables needed for local dev.
+
+## Admin Login
+
+Requires admin role account. Login is 2-step:
+1. Email + password → server sends OTP
+2. Enter 6-digit OTP → access granted
+
+## Build
+
+```bash
+npm run build
+```
+
+Output in `dist/`.
