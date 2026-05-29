@@ -73,8 +73,8 @@ export default function CustomerDetailPage() {
           <div className="border-t border-warmblack/[0.06]">
             {sortedOrders.map((o, i) => (
               <Link
-                key={o.id}
-                to={`/orders/${o.id}`}
+                key={o.orderId}
+                to={`/orders/${o.orderId}`}
                 className={`flex items-center gap-4 py-4 hover:bg-gray-50 -mx-2 px-2 rounded-lg transition-colors ${
                   i < sortedOrders.length - 1 ? 'border-b border-warmblack/[0.04]' : ''
                 }`}
@@ -97,11 +97,11 @@ export default function CustomerDetailPage() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="text-xs font-mono font-bold text-warmblack">{o.id}</p>
+                    <p className="text-xs font-mono font-bold text-warmblack">{o.orderId}</p>
                     <StatusBadge status={o.status} />
                   </div>
                   <p className="text-xs text-ash mt-0.5">
-                    {formatDate(o.date)} — {o.items?.length || 0} {o.items?.length === 1 ? 'item' : 'items'}
+                    {formatDate(o.createdAt)} — {o.items?.length || 0} {o.items?.length === 1 ? 'item' : 'items'}
                   </p>
                 </div>
 
@@ -121,9 +121,9 @@ export default function CustomerDetailPage() {
           transition={{ delay: 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
           <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-warmblack mb-4">
-            Addresses ({customer.addresses.length})
+            Addresses ({(customer.addresses || []).length})
           </p>
-          {customer.addresses.length === 0 ? (
+          {(!customer.addresses || customer.addresses.length === 0) ? (
             <p className="text-sm text-ash">No addresses on file</p>
           ) : (
             <div className="space-y-3">
