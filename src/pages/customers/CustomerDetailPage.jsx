@@ -1,13 +1,20 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useCustomers } from './data/dataLayer';
+import { useCustomerDetail } from './data/dataLayer';
 import StatusBadge from '../../shared/StatusBadge';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 
 export default function CustomerDetailPage() {
   const { id } = useParams();
-  const { customers } = useCustomers();
-  const customer = customers.find((c) => c.id === decodeURIComponent(id));
+  const { customer, orders, loading } = useCustomerDetail(decodeURIComponent(id));
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <div className="w-5 h-5 border-2 border-warmblack/20 border-t-warmblack rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!customer) {
     return (
@@ -18,7 +25,7 @@ export default function CustomerDetailPage() {
     );
   }
 
-  const sortedOrders = [...customer.orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortedOrders = [...(orders || [])].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
     <div>
