@@ -1,14 +1,12 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useOrders } from '../orders/data/dataLayer';
 import { useCustomers } from './data/dataLayer';
 import StatusBadge from '../../shared/StatusBadge';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 
 export default function CustomerDetailPage() {
   const { id } = useParams();
-  const { orders } = useOrders();
-  const customers = useCustomers(orders);
+  const { customers } = useCustomers();
   const customer = customers.find((c) => c.id === decodeURIComponent(id));
 
   if (!customer) {
