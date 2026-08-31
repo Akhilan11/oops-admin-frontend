@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../../../utils/api';
+import * as settingsService from '../../../services/settingsService';
 
 export const EMAIL_TRIGGERS = [
   { id: 'placed', status: 'placed', label: 'Order Placed', description: 'Confirmation with order summary & expected delivery', color: 'bg-blue-500', defaultOn: true },
@@ -40,7 +40,7 @@ export function useConnections() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/admin/settings/connections')
+    settingsService.getConnections()
       .then((res) => setConnections(res.data.connections || {}))
       .catch((err) => console.error('Failed to fetch connections:', err.message))
       .finally(() => setLoading(false));
@@ -48,12 +48,12 @@ export function useConnections() {
 
   const connect = useCallback(async (id, data) => {
     const payload = { ...data, connectedAt: new Date().toISOString() };
-    await api.put(`/admin/settings/connections/${id}`, payload);
+    await settingsService.saveConnection(id, payload);
     setConnections((prev) => ({ ...prev, [id]: payload }));
   }, []);
 
   const disconnect = useCallback(async (id) => {
-    await api.delete(`/admin/settings/connections/${id}`);
+    await settingsService.deleteConnection(id);
     setConnections((prev) => ({ ...prev, [id]: null }));
   }, []);
 
@@ -68,7 +68,7 @@ export function useEmailTriggers() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/admin/settings/email-triggers')
+    settingsService.getEmailTriggers()
       .then((res) => setTriggers(res.data.triggers || {}))
       .catch((err) => console.error('Failed to fetch triggers:', err.message))
       .finally(() => setLoading(false));
@@ -78,7 +78,7 @@ export function useEmailTriggers() {
     const next = { ...triggers, [id]: !triggers[id] };
     setTriggers(next);
     try {
-      await api.put('/admin/settings/email-triggers', next);
+      await settingsService.updateEmailTriggers(next);
     } catch (err) {
       // Revert on failure
       setTriggers(triggers);

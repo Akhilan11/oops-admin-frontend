@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../../../utils/api';
+import * as productService from '../../../services/productService';
 
 // Normalize: pages use p.id everywhere, backend returns _id
 const normalize = (p) => ({ ...p, id: p._id, stock: p.stock instanceof Object && !Array.isArray(p.stock) ? (p.stock.toJSON ? p.stock.toJSON() : p.stock) : p.stock || {} });
@@ -10,7 +10,7 @@ export function useProducts() {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const res = await api.get('/admin/products?limit=200');
+      const res = await productService.getProducts(200);
       setProducts(res.data.products.map(normalize));
     } catch (err) {
       console.error('Failed to fetch products:', err.message);
@@ -22,21 +22,21 @@ export function useProducts() {
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
   const addProduct = useCallback(async (product) => {
-    const res = await api.post('/admin/products', product);
+    const res = await productService.createProduct(product);
     const p = normalize(res.data.product);
     setProducts((prev) => [p, ...prev]);
     return p;
   }, []);
 
   const updateProduct = useCallback(async (id, updates) => {
-    const res = await api.put(`/admin/products/${id}`, updates);
+    const res = await productService.updateProduct(id, updates);
     const p = normalize(res.data.product);
     setProducts((prev) => prev.map((old) => (old.id === id ? p : old)));
     return p;
   }, []);
 
   const deleteProduct = useCallback(async (id) => {
-    await api.delete(`/admin/products/${id}`);
+    await productService.deleteProduct(id);
     setProducts((prev) => prev.filter((p) => p.id !== id));
   }, []);
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../../../utils/api';
+import * as customerService from '../../../services/customerService';
 
 export function useCustomers() {
   const [customers, setCustomers] = useState([]);
@@ -7,7 +7,7 @@ export function useCustomers() {
 
   const fetchCustomers = useCallback(async () => {
     try {
-      const res = await api.get('/admin/customers?limit=200');
+      const res = await customerService.getCustomers(200);
       setCustomers(
         res.data.customers.map((c) => ({
           ...c,
@@ -34,7 +34,7 @@ export function useCustomerDetail(phone) {
 
   useEffect(() => {
     if (!phone) return;
-    api.get(`/admin/customers/${phone}`)
+    customerService.getCustomerDetail(phone)
       .then((res) => setData(res.data))
       .catch((err) => console.error('Failed to fetch customer:', err.message))
       .finally(() => setLoading(false));
