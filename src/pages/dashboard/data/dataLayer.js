@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../../../utils/api';
+import * as dashboardService from '../../../services/dashboardService';
 
 // No-op — seed is now handled by `npm run seed` on the backend
 export function useDashboardSeed() {}
@@ -16,11 +16,11 @@ export function useDashboardData(period = 'all') {
     setLoading(true);
     try {
       const [statsRes, revenueRes, statusRes, topRes, recentRes] = await Promise.all([
-        api.get(`/admin/dashboard/stats?period=${period}`),
-        api.get(`/admin/dashboard/revenue-by-day?period=${period}`),
-        api.get(`/admin/dashboard/status-breakdown?period=${period}`),
-        api.get(`/admin/dashboard/top-products?period=${period}&limit=5`),
-        api.get('/admin/dashboard/recent-orders?limit=5'),
+        dashboardService.getStats(period),
+        dashboardService.getRevenueByDay(period),
+        dashboardService.getStatusBreakdown(period),
+        dashboardService.getTopProducts(period, 5),
+        dashboardService.getRecentOrders(5),
       ]);
 
       setStats(statsRes.data);

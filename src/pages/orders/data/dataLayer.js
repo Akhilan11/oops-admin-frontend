@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../../../utils/api';
+import * as orderService from '../../../services/orderService';
 
 export function useOrders() {
   const [orders, setOrders] = useState([]);
@@ -7,7 +7,7 @@ export function useOrders() {
 
   const fetchOrders = useCallback(async () => {
     try {
-      const res = await api.get('/admin/orders?limit=200');
+      const res = await orderService.getOrders(200);
       // Normalize: pages use o.id and o.date, backend uses _id/orderId/createdAt
       setOrders(
         res.data.orders.map((o) => ({
@@ -27,7 +27,7 @@ export function useOrders() {
 
   const updateStatus = useCallback(async (orderId, newStatus) => {
     try {
-      const res = await api.patch(`/admin/orders/${orderId}/status`, { status: newStatus });
+      const res = await orderService.updateOrderStatus(orderId, newStatus);
       const updated = res.data.order;
       setOrders((prev) =>
         prev.map((o) =>

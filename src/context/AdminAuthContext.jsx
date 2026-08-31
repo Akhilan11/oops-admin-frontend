@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../utils/api';
+import * as adminAuthService from '../services/adminAuthService';
 
 const AdminAuthContext = createContext(null);
 
@@ -19,7 +20,7 @@ export function AdminAuthProvider({ children }) {
   // On mount, try to restore session via refresh token cookie
   useEffect(() => {
     if (api.getToken()) {
-      api.get('/auth/me')
+      adminAuthService.getCurrentUser()
         .then((res) => {
           const user = res.data.user;
           if (user.role !== 'admin') throw new Error('Not admin');
@@ -40,7 +41,7 @@ export function AdminAuthProvider({ children }) {
   // Step 1: send email+password, server responds with requiresOtp or error
   const login = async (email, password) => {
     try {
-      await api.post('/admin/auth/login', { email, password });
+      await adminAuthService.login(email, password);
       return { success: true, requiresOtp: true };
     } catch (err) {
       return { error: err.message || 'Login failed' };
@@ -50,7 +51,7 @@ export function AdminAuthProvider({ children }) {
   // Step 2: verify the 2FA OTP
   const verifyOtp = async (email, otp) => {
     try {
-      const res = await api.post('/admin/auth/verify-otp', { email, otp });
+      const res = await adminAuthService.verifyOtp(email, otp);
       const { user, accessToken } = res.data;
       api.setToken(accessToken);
       const session = { ...user, loggedIn: true };
@@ -63,7 +64,7 @@ export function AdminAuthProvider({ children }) {
   };
 
   const logout = async () => {
-    try { await api.post('/auth/logout'); } catch { /* ignore */ }
+    try { await adminAuthService.logout(); } catch { /* ignore */ }
     api.clearToken();
     setAdmin(null);
     sessionStorage.removeItem('oops-admin-user');
